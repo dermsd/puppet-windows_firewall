@@ -38,10 +38,8 @@ class windows_firewall (
 
   if $ensure == 'running' {
     $enabled = true
-    $enabled_data = '1'
   } else {
     $enabled = false
-    $enabled_data = '0'
   }
 
   service { 'windows_firewall':
@@ -54,21 +52,21 @@ class windows_firewall (
     ensure => 'present',
     path   => '32:HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\DomainProfile\EnableFirewall',
     type   => 'dword',
-    data   => pick($enable_domain_profile,$enabled_data),
+    data   => bool2num(pick($enable_domain_profile,$enabled)),
   }
 
   registry_value { 'EnableFirewallPublicProfile':
     ensure => 'present',
     path   => '32:HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\PublicProfile\EnableFirewall',
     type   => 'dword',
-    data   => pick($enable_public_profile,$enabled_data),
+    data   => bool2num(pick($enable_public_profile,$enabled)),
   }
 
   registry_value { 'EnableFirewallStandardProfile':
     ensure => 'present',
     path   => '32:HKLM\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\EnableFirewall',
     type   => 'dword',
-    data   => pick($enable_standard_profile,$enabled_data),
+    data   => bool2num(pick($enable_standard_profile,$enabled)),
   }
 
   $exceptions.each |$exception, $attributes| {
